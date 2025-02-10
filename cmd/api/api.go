@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"ecom_go/services/user"
 	"log"
 	"net/http"
 
@@ -22,7 +23,11 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer {
 
 func (s *APIServer) Run() error {
 	router := mux.NewRouter()
-	// subrouter := router.PathPrefix("/api/v1").Subrouter()
+	subrouter := router.PathPrefix("/api/v1").Subrouter()
+
+	userStore := user.NewStore(s.db)
+	userHandler := user.NewHandler(userStore)
+	userHandler.RegisterRoutes(subrouter)
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
