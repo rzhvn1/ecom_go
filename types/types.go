@@ -31,3 +31,8 @@ type RegisterUserPayload struct {
 	PhoneNumber string `json:"phone_number"`
 	Password    string `json:"password"`
 }
+
+type LoginUserPayload struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
