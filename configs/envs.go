@@ -9,14 +9,15 @@ import (
 )
 
 type Config struct {
-	PublicHost             string
-	Port                   string
-	DBUser                 string
-	DBPassword             string
-	DBAddress              string
-	DBName                 string
-	JWTSecret              string
-	JWTExpirationInSeconds int64
+	PublicHost                    string
+	Port                          string
+	DBUser                        string
+	DBPassword                    string
+	DBAddress                     string
+	DBName                        string
+	JWTSecret                     string
+	JWTExpirationInSeconds        int64
+	JWTRefreshExpirationInSeconds int64
 }
 
 var Envs = initConfig()
@@ -25,14 +26,15 @@ func initConfig() Config {
 	godotenv.Load()
 
 	return Config{
-		PublicHost:             getEnv("PUBLIC_HOST", "http://localhost"),
-		Port:                   getEnv("PORT", "8080"),
-		DBUser:                 getEnv("DB_USER", "root"),
-		DBPassword:             getEnv("DB_PASSWORD", "password"),
-		DBAddress:              fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
-		DBName:                 getEnv("DB_NAME", "ecom_go"),
-		JWTSecret:              getEnv("JWT_SECRET", "notsecret"),
-		JWTExpirationInSeconds: getEnvAsInt("JWT_EXPIRATION_IN_SECONDS", 3600*24*7),
+		PublicHost:                    getEnv("PUBLIC_HOST", "http://localhost"),
+		Port:                          getEnv("PORT", "8080"),
+		DBUser:                        getEnv("DB_USER", "root"),
+		DBPassword:                    getEnv("DB_PASSWORD", "password"),
+		DBAddress:                     fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
+		DBName:                        getEnv("DB_NAME", "ecom_go"),
+		JWTSecret:                     getEnv("JWT_SECRET", "notsecret"),
+		JWTExpirationInSeconds:        getEnvAsInt("JWT_EXPIRATION_IN_SECONDS", 15*60),
+		JWTRefreshExpirationInSeconds: getEnvAsInt("JWT_REFRESH_EXPIRATION_IN_SECONDS", 3600*24*7),
 	}
 }
 

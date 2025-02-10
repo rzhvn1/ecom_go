@@ -25,9 +25,11 @@ func (s *APIServer) Run() error {
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
+	authRouter := subrouter.PathPrefix("/auth").Subrouter()
+
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
-	userHandler.RegisterRoutes(subrouter)
+	userHandler.RegisterRoutes(authRouter)
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
