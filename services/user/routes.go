@@ -26,6 +26,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
 	router.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
 	router.HandleFunc("/refresh", h.handleRefreshToken).Methods(http.MethodPost)
+	router.HandleFunc("/profile/{user_id}", auth.WithJWTAuth(h.handleGetProfile, h.store)).Methods(http.MethodGet)
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +109,7 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
-		"access_token": accessToken,
+		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
 }
@@ -146,4 +147,37 @@ func (h *Handler) handleRefreshToken(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
 		"access_token": accessToken,
 	})
+}
+
+func (h *Handler) handleGetProfile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["user_id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user ID"))
+		return
+	}
+
+	userID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid user ID"))
+		return
+	}
+
+	user, err := h.store.GetUserByID(userID)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	profile := types.UserProfile{
+		ID:            user.ID,
+		FirstName:     user.FirstName,
+		LastName:      user.LastName,
+		Email:         user.Email,
+		PhoneNumber:   user.PhoneNumber,
+		Role:          user.Role,
+		BaseTimeModel: user.BaseTimeModel,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, profile)
 }

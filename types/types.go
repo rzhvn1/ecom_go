@@ -18,6 +18,16 @@ type User struct {
 	BaseTimeModel
 }
 
+type UserProfile struct {
+	ID          int    `json:"id"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	Role        string `json:"role"`
+	BaseTimeModel
+}
+
 type UserStore interface {
 	GetUserByID(id int) (*User, error)
 	GetUserByEmail(email string) (*User, error)
