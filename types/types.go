@@ -28,10 +28,37 @@ type UserProfile struct {
 	BaseTimeModel
 }
 
+type Shop struct {
+	ID            int        `json:"id"`
+	UserID        int        `json:"user_id"`
+	Name          string     `json:"name"`
+	Description   string     `json:"description"`
+	CategoryID    int        `json:"category_id"`
+	Opens_at      *time.Time `json:"opens_at"`
+	Closes_at     *time.Time `json:"closes_at"`
+	Address       string     `json:"address"`
+	Image         string     `json:"image"`
+	BaseTimeModel
+}
+
+type ShopCategory struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	BaseTimeModel
+}
+
 type UserStore interface {
 	GetUserByID(id int) (*User, error)
 	GetUserByEmail(email string) (*User, error)
 	CreateUser(user User) error
+}
+
+type ShopStore interface {
+	CreateShop(shop CreateShopPayload) error
+}
+
+type ShopCategoryStore interface {
+
 }
 
 type RegisterUserPayload struct {
@@ -49,4 +76,17 @@ type LoginUserPayload struct {
 
 type RefreshTokenPayload struct {
 	RefreshToken string `json:"refresh_token"`
+}
+
+
+type CreateShopPayload struct {
+	ID            int        `json:"id"`
+	UserID        int        `json:"user_id" validate:"required"`
+	Name          string     `json:"name" validate:"required"`
+	Description   string     `json:"description,omitempty"`
+	CategoryID    int        `json:"category_id" validate:"required"`
+	Opens_at      *time.Time `json:"opens_at,omitempty"`
+	Closes_at     *time.Time `json:"closes_at,omitempty"`
+	Address       string     `json:"address,omitempty" validate:"omitempty,min=5"`
+	Image         string     `json:"image,omitempty" validate:"omitempty,url"`
 }
