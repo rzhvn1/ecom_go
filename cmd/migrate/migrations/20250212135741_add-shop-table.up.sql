@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS shops (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `category_id` INT UNSIGNED NOT NULL,
+  `opens_at` DATETIME DEFAULT NULL,
+  `closes_at` DATETIME DEFAULT NULL,
+  `address` VARCHAR(255),
+  `image` VARCHAR(255),
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`),
+  FOREIGN KEY (`category_id`) REFERENCES shopcategories(`id`)
+);

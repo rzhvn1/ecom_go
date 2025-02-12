@@ -58,6 +58,7 @@ type ShopStore interface {
 }
 
 type ShopCategoryStore interface {
+	GetShopCategoryByID(shopCategoryId int) (*ShopCategory, error)
 	CreateShopCategory(shopcategory CreateShopCategoryPayload) error
 }
 

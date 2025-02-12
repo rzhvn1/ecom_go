@@ -32,25 +32,25 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handler) handleCreateShopCategory(w http.ResponseWriter, r *http.Request) {
-	var shopcategory types.CreateShopCategoryPayload
-	if err := utils.ParseJSON(r, &shopcategory); err != nil {
+	var shopCategory types.CreateShopCategoryPayload
+	if err := utils.ParseJSON(r, &shopCategory); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	if err := utils.Validate.Struct(shopcategory); err != nil {
+	if err := utils.Validate.Struct(shopCategory); err != nil {
 		errors := err.(validator.ValidationErrors)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 		return
 	}
 
-	err := h.categoryStore.CreateShopCategory(shopcategory)
+	err := h.categoryStore.CreateShopCategory(shopCategory)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, shopcategory)
+	utils.WriteJSON(w, http.StatusOK, shopCategory)
 }
 
 func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +65,12 @@ func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 		return
 	}
-
+	// ToDo: fix this part
+	if _, err := h.categoryStore.GetShopCategoryByID(shop.CategoryID); err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("invalid payload: %v", err))
+		return
+	}
+	
 	err := h.store.CreateShop(shop)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
