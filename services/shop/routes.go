@@ -27,6 +27,30 @@ func NewHandler(store types.ShopStore, categoryStore types.ShopCategoryStore, us
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/", auth.WithJWTAuth(h.handleCreateShop, h.userStore)).Methods(http.MethodPost)
+
+	router.HandleFunc("/category", auth.WithJWTAuth(h.handleCreateShopCategory, h.userStore)).Methods(http.MethodPost)
+}
+
+func (h *Handler) handleCreateShopCategory(w http.ResponseWriter, r *http.Request) {
+	var shopcategory types.CreateShopCategoryPayload
+	if err := utils.ParseJSON(r, &shopcategory); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.Validate.Struct(shopcategory); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	err := h.categoryStore.CreateShopCategory(shopcategory)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, shopcategory)
 }
 
 func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {

@@ -58,7 +58,7 @@ type ShopStore interface {
 }
 
 type ShopCategoryStore interface {
-
+	CreateShopCategory(shopcategory CreateShopCategoryPayload) error
 }
 
 type RegisterUserPayload struct {
@@ -78,9 +78,11 @@ type RefreshTokenPayload struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+type CreateShopCategoryPayload struct {
+	Name string `json:"name"`
+}
 
 type CreateShopPayload struct {
-	ID            int        `json:"id"`
 	UserID        int        `json:"user_id" validate:"required"`
 	Name          string     `json:"name" validate:"required"`
 	Description   string     `json:"description,omitempty"`
