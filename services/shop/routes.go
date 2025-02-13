@@ -6,6 +6,7 @@ import (
 	"ecom_go/utils"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -27,6 +28,7 @@ func NewHandler(store types.ShopStore, categoryStore types.ShopCategoryStore, us
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/", auth.WithJWTAuth(h.handleCreateShop, h.userStore)).Methods(http.MethodPost)
+	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleGetShop, h.userStore)).Methods(http.MethodGet)
 
 	router.HandleFunc("/category", auth.WithAdminJWTAuth(h.handleCreateShopCategory, h.userStore)).Methods(http.MethodPost)
 }
@@ -51,6 +53,29 @@ func (h *Handler) handleCreateShopCategory(w http.ResponseWriter, r *http.Reques
 	}
 
 	utils.WriteJSON(w, http.StatusOK, shopCategory)
+}
+
+func (h *Handler) handleGetShop(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["shop_id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing shop id"))
+		return
+	}
+
+	shopID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid shop ID"))
+		return
+	}
+
+	shop, err := h.store.GetShopByID(shopID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, shop)
 }
 
 func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {

@@ -54,6 +54,7 @@ type UserStore interface {
 }
 
 type ShopStore interface {
+	GetShopByID(shopID int) (*Shop, error)
 	CreateShop(shop CreateShopPayload) error
 }
 
