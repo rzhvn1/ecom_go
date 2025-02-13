@@ -3,6 +3,7 @@ package shopcategory
 import (
 	"database/sql"
 	"ecom_go/types"
+	"fmt"
 )
 
 type Store struct {
@@ -18,13 +19,16 @@ func (s *Store) GetShopCategoryByID(shopCategoryId int) (*types.ShopCategory, er
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close() 
 
 	shopCategory := new(types.ShopCategory)
-	for rows.Next() {
+	if rows.Next() {
 		shopCategory, err = scanRowsIntoShopCategory(rows)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		return nil, fmt.Errorf("shop category not found")
 	}
 
 	return shopCategory, nil

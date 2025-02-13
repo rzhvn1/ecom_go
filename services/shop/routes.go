@@ -65,7 +65,7 @@ func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 		return
 	}
-	// ToDo: fix this part
+
 	if _, err := h.categoryStore.GetShopCategoryByID(shop.CategoryID); err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("invalid payload: %v", err))
 		return
