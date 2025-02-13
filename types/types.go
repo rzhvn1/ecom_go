@@ -57,6 +57,7 @@ type ShopStore interface {
 	GetShopByID(shopID int) (*Shop, error)
 	CreateShop(shop CreateShopPayload) error
 	UpdateShop(shopID int, shop UpdateShopPayload) error
+	DeleteShop(shopID int) (int64, error)
 }
 
 type ShopCategoryStore interface {

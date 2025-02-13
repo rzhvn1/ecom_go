@@ -30,6 +30,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/", auth.WithJWTAuth(h.handleCreateShop, h.userStore)).Methods(http.MethodPost)
 	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleGetShop, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleUpdateShop, h.userStore)).Methods(http.MethodPut)
+	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleDeleteShop, h.userStore)).Methods(http.MethodDelete)
 
 	router.HandleFunc("/category", auth.WithAdminJWTAuth(h.handleCreateShopCategory, h.userStore)).Methods(http.MethodPost)
 }
@@ -106,6 +107,7 @@ func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, shop)
 }
 
+// ToDo: add owner permissions
 func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 	var shop types.UpdateShopPayload
 	
@@ -177,4 +179,33 @@ func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 
 	updatedShop, _ := h.store.GetShopByID(shopID)
 	utils.WriteJSON(w, http.StatusOK, updatedShop)
+}
+
+// ToDo: add owner permissions
+func (h *Handler) handleDeleteShop(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["shop_id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing shop ID"))
+		return
+	}
+
+	shopID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid shop ID"))
+		return
+	}
+
+	rowsAffected, err := h.store.DeleteShop(shopID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to delete shop: %v", err))
+		return
+	}
+
+	if rowsAffected == 0 {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("shop not found"))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
