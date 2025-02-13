@@ -56,6 +56,7 @@ type UserStore interface {
 type ShopStore interface {
 	GetShopByID(shopID int) (*Shop, error)
 	CreateShop(shop CreateShopPayload) error
+	UpdateShop(shopID int, shop UpdateShopPayload) error
 }
 
 type ShopCategoryStore interface {
@@ -93,4 +94,14 @@ type CreateShopPayload struct {
 	Closes_at     *time.Time `json:"closes_at,omitempty"`
 	Address       string     `json:"address,omitempty" validate:"omitempty,min=5"`
 	Image         string     `json:"image,omitempty" validate:"omitempty,url"`
+}
+
+type UpdateShopPayload struct {
+	Name          *string     `json:"name,omitempty"`
+	Description   *string     `json:"description,omitempty"`
+	CategoryID    *int        `json:"category_id,omitempty"`
+	Opens_at      *time.Time `json:"opens_at,omitempty"`
+	Closes_at     *time.Time `json:"closes_at,omitempty"`
+	Address       *string     `json:"address,omitempty" validate:"omitempty,min=5"`
+	Image         *string     `json:"image,omitempty" validate:"omitempty,url"`
 }
