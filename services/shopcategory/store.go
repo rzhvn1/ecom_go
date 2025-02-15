@@ -50,6 +50,20 @@ func (s *Store) UpdateShopCategory(categoryID int, shopCategory types.CreateUpda
 	return err
 }
 
+func (s *Store) DeleteShopCategory(categoryID int) (int64, error) {
+	result, err := s.db.Exec("DELETE FROM shopcategories WHERE id = ?", categoryID)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, nil
+	}
+
+	return rowsAffected, nil
+}
+
 func scanRowsIntoShopCategory(rows *sql.Rows) (*types.ShopCategory, error) {
 	shopCategory := new(types.ShopCategory)
 
@@ -64,18 +78,4 @@ func scanRowsIntoShopCategory(rows *sql.Rows) (*types.ShopCategory, error) {
 	}
 
 	return shopCategory, nil
-}
-
-func (s *Store) DeleteShopCategory(categoryID int) (int64, error) {
-	result, err := s.db.Exec("DELETE FROM shopcategories WHERE id = ?", categoryID)
-	if err != nil {
-		return 0, err
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return 0, nil
-	}
-
-	return rowsAffected, nil
 }

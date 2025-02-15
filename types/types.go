@@ -28,6 +28,12 @@ type UserProfile struct {
 	BaseTimeModel
 }
 
+type ShopCategory struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	BaseTimeModel
+}
+
 type Shop struct {
 	ID          int    `json:"id"`
 	UserID      int    `json:"user_id"`
@@ -41,7 +47,7 @@ type Shop struct {
 	BaseTimeModel
 }
 
-type ShopCategory struct {
+type ProductCategory struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 	BaseTimeModel
@@ -53,18 +59,18 @@ type UserStore interface {
 	CreateUser(user User) error
 }
 
-type ShopStore interface {
-	GetShopByID(shopID int) (*Shop, error)
-	CreateShop(shop CreateShopPayload) error
-	UpdateShop(shopID int, shop UpdateShopPayload) error
-	DeleteShop(shopID int) (int64, error)
-}
-
 type ShopCategoryStore interface {
 	GetShopCategoryByID(shopCategoryId int) (*ShopCategory, error)
 	CreateShopCategory(shopcategory CreateUpdateShopCategoryPayload) error
 	UpdateShopCategory(categoryID int, shopCategory CreateUpdateShopCategoryPayload) error
 	DeleteShopCategory(categoryID int) (int64, error)
+}
+
+type ShopStore interface {
+	GetShopByID(shopID int) (*Shop, error)
+	CreateShop(shop CreateShopPayload) error
+	UpdateShop(shopID int, shop UpdateShopPayload) error
+	DeleteShop(shopID int) (int64, error)
 }
 
 type RegisterUserPayload struct {
