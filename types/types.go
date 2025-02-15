@@ -85,11 +85,10 @@ type ShopStore interface {
 }
 
 type ProductCategoryStore interface {
-
+	CreateShopCategory(productCategory CreateUpdateProductCategoryPayload) error
 }
 
 type ProductStore interface {
-	
 }
 
 type RegisterUserPayload struct {
@@ -132,4 +131,8 @@ type UpdateShopPayload struct {
 	Closes_at   *string `json:"closes_at,omitempty"`
 	Address     *string `json:"address,omitempty" validate:"omitempty,min=5"`
 	Image       *string `json:"image,omitempty" validate:"omitempty,url"`
+}
+
+type CreateUpdateProductCategoryPayload struct {
+	Name string `json:"name"`
 }

@@ -2,6 +2,8 @@ package api
 
 import (
 	"database/sql"
+	"ecom_go/services/product"
+	"ecom_go/services/productcategory"
 	"ecom_go/services/shop"
 	"ecom_go/services/shopcategory"
 	"ecom_go/services/user"
@@ -29,6 +31,7 @@ func (s *APIServer) Run() error {
 
 	userRouter := subrouter.PathPrefix("/users").Subrouter()
 	shopRouter := subrouter.PathPrefix("/shops").Subrouter()
+	productRouter := subrouter.PathPrefix("/products").Subrouter()
 
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
@@ -38,6 +41,11 @@ func (s *APIServer) Run() error {
 	shopStore := shop.NewStore(s.db)
 	shopHandler := shop.NewHandler(shopStore, shopCategoryStore, userStore)
 	shopHandler.RegisterRoutes(shopRouter)
+
+	productCategoryStore := productcategory.NewStore(s.db)
+	productStore := product.NewStore(s.db)
+	productHandler := product.NewHandler(productStore, productCategoryStore, userStore)
+	productHandler.RegisterRoutes(productRouter)
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
