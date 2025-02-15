@@ -34,7 +34,7 @@ func (s *Store) GetShopCategoryByID(shopCategoryId int) (*types.ShopCategory, er
 	return shopCategory, nil
 }
 
-func (s *Store) CreateShopCategory(shopCategory types.CreateShopCategoryPayload) error {
+func (s *Store) CreateShopCategory(shopCategory types.CreateUpdateShopCategoryPayload) error {
 	_, err := s.db.Exec(
 		"INSERT INTO shopcategories (name) VALUES (?)", shopCategory.Name)
 	if err != nil {
@@ -42,6 +42,12 @@ func (s *Store) CreateShopCategory(shopCategory types.CreateShopCategoryPayload)
 	}
 
 	return nil
+}
+
+func (s *Store) UpdateShopCategory(categoryID int, shopCategory types.CreateUpdateShopCategoryPayload) error {
+	_, err := s.db.Exec("UPDATE shopcategories SET name = ? WHERE id = ?", shopCategory.Name, categoryID)
+
+	return err
 }
 
 func scanRowsIntoShopCategory(rows *sql.Rows) (*types.ShopCategory, error) {

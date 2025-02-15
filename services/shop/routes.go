@@ -34,6 +34,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 	router.HandleFunc("/category", auth.WithAdminJWTAuth(h.handleCreateShopCategory, h.userStore)).Methods(http.MethodPost)
 	router.HandleFunc("/category/{category_id}", auth.WithAdminJWTAuth(h.handleGetShopCategory, h.userStore)).Methods(http.MethodGet)
+	router.HandleFunc("/category/{category_id}", auth.WithAdminJWTAuth(h.handleUpdateShopCategory, h.userStore)).Methods(http.MethodPut)
 }
 
 func (h *Handler) handleGetShopCategory(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +61,7 @@ func (h *Handler) handleGetShopCategory(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *Handler) handleCreateShopCategory(w http.ResponseWriter, r *http.Request) {
-	var shopCategory types.CreateShopCategoryPayload
+	var shopCategory types.CreateUpdateShopCategoryPayload
 	if err := utils.ParseJSON(r, &shopCategory); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
@@ -79,6 +80,49 @@ func (h *Handler) handleCreateShopCategory(w http.ResponseWriter, r *http.Reques
 	}
 
 	utils.WriteJSON(w, http.StatusOK, shopCategory)
+}
+
+func (h *Handler) handleUpdateShopCategory(w http.ResponseWriter, r *http.Request) {
+	var shopCategory types.CreateUpdateShopCategoryPayload
+
+	vars := mux.Vars(r)
+	str, ok := vars["category_id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing category ID"))
+		return
+	}
+
+	categoryID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid category ID"))
+		return
+	}
+
+	existingCategory, err := h.categoryStore.GetShopCategoryByID(categoryID)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	if err := utils.ParseJSON(r, &shopCategory); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.Validate.Struct(shopCategory); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	if err := h.categoryStore.UpdateShopCategory(existingCategory.ID, shopCategory); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	updatedCategory, _ := h.categoryStore.GetShopCategoryByID(existingCategory.ID)
+
+	utils.WriteJSON(w, http.StatusOK, updatedCategory)
 }
 
 func (h *Handler) handleGetShop(w http.ResponseWriter, r *http.Request) {

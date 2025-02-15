@@ -62,7 +62,8 @@ type ShopStore interface {
 
 type ShopCategoryStore interface {
 	GetShopCategoryByID(shopCategoryId int) (*ShopCategory, error)
-	CreateShopCategory(shopcategory CreateShopCategoryPayload) error
+	CreateShopCategory(shopcategory CreateUpdateShopCategoryPayload) error
+	UpdateShopCategory(categoryID int, shopCategory CreateUpdateShopCategoryPayload) error
 }
 
 type RegisterUserPayload struct {
@@ -82,7 +83,7 @@ type RefreshTokenPayload struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-type CreateShopCategoryPayload struct {
+type CreateUpdateShopCategoryPayload struct {
 	Name string `json:"name"`
 }
 
