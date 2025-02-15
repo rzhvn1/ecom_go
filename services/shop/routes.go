@@ -27,7 +27,7 @@ func NewHandler(store types.ShopStore, categoryStore types.ShopCategoryStore, us
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/", auth.WithJWTAuth(h.handleCreateShop, h.userStore)).Methods(http.MethodPost)
+	router.HandleFunc("", auth.WithJWTAuth(h.handleCreateShop, h.userStore)).Methods(http.MethodPost)
 	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleGetShop, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleUpdateShop, h.userStore)).Methods(http.MethodPut)
 	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleDeleteShop, h.userStore)).Methods(http.MethodDelete)
