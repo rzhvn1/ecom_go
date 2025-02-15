@@ -19,7 +19,7 @@ func (s *Store) GetShopCategoryByID(shopCategoryId int) (*types.ShopCategory, er
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close() 
+	defer rows.Close()
 
 	shopCategory := new(types.ShopCategory)
 	if rows.Next() {

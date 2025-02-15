@@ -20,9 +20,9 @@ type Handler struct {
 
 func NewHandler(store types.ShopStore, categoryStore types.ShopCategoryStore, userStore types.UserStore) *Handler {
 	return &Handler{
-		store: store,
+		store:         store,
 		categoryStore: categoryStore,
-		userStore: userStore,
+		userStore:     userStore,
 	}
 }
 
@@ -97,7 +97,7 @@ func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("invalid payload: %v", err))
 		return
 	}
-	
+
 	err := h.store.CreateShop(shop)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
@@ -115,7 +115,7 @@ func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("unauthorized"))
 		return
 	}
-	
+
 	vars := mux.Vars(r)
 	str, ok := vars["shop_id"]
 	if !ok {
@@ -156,7 +156,7 @@ func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("shop category not found"))
 			return
-		}	
+		}
 	}
 
 	if shop.Name == nil {

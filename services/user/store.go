@@ -58,7 +58,7 @@ func (s *Store) GetUserByEmail(email string) (*types.User, error) {
 
 func (s *Store) CreateUser(user types.User) error {
 	_, err := s.db.Exec(
-		"INSERT INTO users (first_name, last_name, email, phone_number, role, password) VALUES (?, ?, ?, ?, ?, ?)", 
+		"INSERT INTO users (first_name, last_name, email, phone_number, role, password) VALUES (?, ?, ?, ?, ?, ?)",
 		user.FirstName, user.LastName, user.Email, user.PhoneNumber, user.Role, user.Password)
 	if err != nil {
 		return err

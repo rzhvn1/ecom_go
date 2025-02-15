@@ -109,8 +109,8 @@ func WithAdminJWTAuth(handlerFunc http.HandlerFunc, store types.UserStore) http.
 
 func CreateJWT(secret []byte, userID int, duration int64) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userID": strconv.Itoa(int(userID)),
-		"expires_at": time.Now().Add(time.Duration(duration)*time.Second).Unix(),
+		"userID":     strconv.Itoa(int(userID)),
+		"expires_at": time.Now().Add(time.Duration(duration) * time.Second).Unix(),
 	})
 
 	tokenString, err := token.SignedString(secret)

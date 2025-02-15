@@ -33,7 +33,7 @@ func main() {
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}
-	
+
 }
 
 func initStorage(db *sql.DB) {
