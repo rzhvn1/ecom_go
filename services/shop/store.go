@@ -54,6 +54,20 @@ func (s *Store) UpdateShop(shopID int, shop types.UpdateShopPayload) error {
 	return err
 }
 
+func (s *Store) DeleteShop(shopID int) (int64, error) {
+	result, err := s.db.Exec("DELETE FROM shops WHERE id = ?", shopID)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, nil
+	}
+
+	return rowsAffected, nil
+}
+
 func scanRowsIntoShop(rows *sql.Rows) (*types.Shop, error) {
 	shop := new(types.Shop)
 
@@ -75,18 +89,4 @@ func scanRowsIntoShop(rows *sql.Rows) (*types.Shop, error) {
 	}
 
 	return shop, nil
-}
-
-func (s *Store) DeleteShop(shopID int) (int64, error) {
-	result, err := s.db.Exec("DELETE FROM shops WHERE id = ?", shopID)
-	if err != nil {
-		return 0, err
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return 0, nil
-	}
-
-	return rowsAffected, nil
 }

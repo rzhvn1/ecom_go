@@ -65,3 +65,17 @@ func scanRowsIntoShopCategory(rows *sql.Rows) (*types.ShopCategory, error) {
 
 	return shopCategory, nil
 }
+
+func (s *Store) DeleteShopCategory(categoryID int) (int64, error) {
+	result, err := s.db.Exec("DELETE FROM shopcategories WHERE id = ?", categoryID)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, nil
+	}
+
+	return rowsAffected, nil
+}

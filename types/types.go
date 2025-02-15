@@ -64,6 +64,7 @@ type ShopCategoryStore interface {
 	GetShopCategoryByID(shopCategoryId int) (*ShopCategory, error)
 	CreateShopCategory(shopcategory CreateUpdateShopCategoryPayload) error
 	UpdateShopCategory(categoryID int, shopCategory CreateUpdateShopCategoryPayload) error
+	DeleteShopCategory(categoryID int) (int64, error)
 }
 
 type RegisterUserPayload struct {

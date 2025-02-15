@@ -35,6 +35,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/category", auth.WithAdminJWTAuth(h.handleCreateShopCategory, h.userStore)).Methods(http.MethodPost)
 	router.HandleFunc("/category/{category_id}", auth.WithAdminJWTAuth(h.handleGetShopCategory, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/category/{category_id}", auth.WithAdminJWTAuth(h.handleUpdateShopCategory, h.userStore)).Methods(http.MethodPut)
+	router.HandleFunc("/category/{category_id}", auth.WithAdminJWTAuth(h.handleDeleteShopCategory, h.userStore)).Methods(http.MethodDelete)
 }
 
 func (h *Handler) handleGetShopCategory(w http.ResponseWriter, r *http.Request) {
@@ -123,6 +124,41 @@ func (h *Handler) handleUpdateShopCategory(w http.ResponseWriter, r *http.Reques
 	updatedCategory, _ := h.categoryStore.GetShopCategoryByID(existingCategory.ID)
 
 	utils.WriteJSON(w, http.StatusOK, updatedCategory)
+}
+
+func (h *Handler) handleDeleteShopCategory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["category_id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing category ID"))
+		return
+	}
+
+	categoryID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid category ID"))
+		return
+	}
+
+	existingCategory, err := h.categoryStore.GetShopCategoryByID(categoryID)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	rowsAffected, err := h.categoryStore.DeleteShopCategory(existingCategory.ID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to delete shop category: %v", err))
+		return
+	}
+
+	if rowsAffected == 0 {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("shop category not found"))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+
 }
 
 func (h *Handler) handleGetShop(w http.ResponseWriter, r *http.Request) {
