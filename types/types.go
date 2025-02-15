@@ -53,6 +53,17 @@ type ProductCategory struct {
 	BaseTimeModel
 }
 
+type Product struct {
+	ID          int    `json:"id"`
+	ShopID      int    `json:"shop_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	CategoryID  int    `json:"category_id"`
+	Quantity    int    `json:"quantity"`
+	Image       string `json:"image"`
+	BaseTimeModel
+}
+
 type UserStore interface {
 	GetUserByID(id int) (*User, error)
 	GetUserByEmail(email string) (*User, error)
@@ -71,6 +82,14 @@ type ShopStore interface {
 	CreateShop(shop CreateShopPayload) error
 	UpdateShop(shopID int, shop UpdateShopPayload) error
 	DeleteShop(shopID int) (int64, error)
+}
+
+type ProductCategoryStore interface {
+
+}
+
+type ProductStore interface {
+	
 }
 
 type RegisterUserPayload struct {
