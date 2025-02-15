@@ -107,9 +107,14 @@ func (h *Handler) handleCreateShop(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, shop)
 }
 
-// ToDo: add owner permissions
 func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 	var shop types.UpdateShopPayload
+
+	userID := auth.GetUserIDFromContext(r.Context())
+	if userID == -1 {
+		utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+		return
+	}
 	
 	vars := mux.Vars(r)
 	str, ok := vars["shop_id"]
@@ -127,6 +132,11 @@ func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 	existingShop, err := h.store.GetShopByID(shopID)
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	if existingShop.UserID != userID {
+		utils.WriteError(w, http.StatusForbidden, fmt.Errorf("you do not have permission to modify this shop"))
 		return
 	}
 
@@ -181,8 +191,13 @@ func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, updatedShop)
 }
 
-// ToDo: add owner permissions
 func (h *Handler) handleDeleteShop(w http.ResponseWriter, r *http.Request) {
+	userID := auth.GetUserIDFromContext(r.Context())
+	if userID == -1 {
+		utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+		return
+	}
+
 	vars := mux.Vars(r)
 	str, ok := vars["shop_id"]
 	if !ok {
@@ -193,6 +208,17 @@ func (h *Handler) handleDeleteShop(w http.ResponseWriter, r *http.Request) {
 	shopID, err := strconv.Atoi(str)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid shop ID"))
+		return
+	}
+
+	existingShop, err := h.store.GetShopByID(shopID)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	if existingShop.UserID != userID {
+		utils.WriteError(w, http.StatusForbidden, fmt.Errorf("you do not have permission to modify this shop"))
 		return
 	}
 
