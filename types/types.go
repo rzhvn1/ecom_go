@@ -29,15 +29,15 @@ type UserProfile struct {
 }
 
 type Shop struct {
-	ID            int        `json:"id"`
-	UserID        int        `json:"user_id"`
-	Name          string     `json:"name"`
-	Description   string     `json:"description"`
-	CategoryID    int        `json:"category_id"`
-	Opens_at      *time.Time `json:"opens_at"`
-	Closes_at     *time.Time `json:"closes_at"`
-	Address       string     `json:"address"`
-	Image         string     `json:"image"`
+	ID          int    `json:"id"`
+	UserID      int    `json:"user_id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	CategoryID  int    `json:"category_id"`
+	Opens_at    string `json:"opens_at"`
+	Closes_at   string `json:"closes_at"`
+	Address     string `json:"address"`
+	Image       string `json:"image"`
 	BaseTimeModel
 }
 
@@ -87,22 +87,22 @@ type CreateShopCategoryPayload struct {
 }
 
 type CreateShopPayload struct {
-	UserID        int        `json:"user_id" validate:"required"`
-	Name          string     `json:"name" validate:"required"`
-	Description   string     `json:"description,omitempty"`
-	CategoryID    int        `json:"category_id" validate:"required"`
-	Opens_at      *time.Time `json:"opens_at,omitempty"`
-	Closes_at     *time.Time `json:"closes_at,omitempty"`
-	Address       string     `json:"address,omitempty" validate:"omitempty,min=5"`
-	Image         string     `json:"image,omitempty" validate:"omitempty,url"`
+	UserID      int    `json:"user_id" validate:"required"`
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description,omitempty"`
+	CategoryID  int    `json:"category_id" validate:"required"`
+	Opens_at    string `json:"opens_at,omitempty"`
+	Closes_at   string `json:"closes_at,omitempty"`
+	Address     string `json:"address,omitempty" validate:"omitempty,min=5"`
+	Image       string `json:"image,omitempty" validate:"omitempty,url"`
 }
 
 type UpdateShopPayload struct {
-	Name          *string     `json:"name,omitempty"`
-	Description   *string     `json:"description,omitempty"`
-	CategoryID    *int        `json:"category_id,omitempty"`
-	Opens_at      *time.Time `json:"opens_at,omitempty"`
-	Closes_at     *time.Time `json:"closes_at,omitempty"`
-	Address       *string     `json:"address,omitempty" validate:"omitempty,min=5"`
-	Image         *string     `json:"image,omitempty" validate:"omitempty,url"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	CategoryID  *int    `json:"category_id,omitempty"`
+	Opens_at    *string `json:"opens_at,omitempty"`
+	Closes_at   *string `json:"closes_at,omitempty"`
+	Address     *string `json:"address,omitempty" validate:"omitempty,min=5"`
+	Image       *string `json:"image,omitempty" validate:"omitempty,url"`
 }

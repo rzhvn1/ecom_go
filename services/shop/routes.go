@@ -159,10 +159,10 @@ func (h *Handler) handleUpdateShop(w http.ResponseWriter, r *http.Request) {
 		shop.CategoryID = &existingShop.CategoryID
 	}
 	if shop.Opens_at == nil {
-		shop.Opens_at = existingShop.Opens_at
+		shop.Opens_at = &existingShop.Opens_at
 	}
 	if shop.Closes_at == nil {
-		shop.Closes_at = existingShop.Closes_at
+		shop.Closes_at = &existingShop.Closes_at
 	}
 	if shop.Address == nil {
 		shop.Address = &existingShop.Address
