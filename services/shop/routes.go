@@ -33,6 +33,30 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/{shop_id}", auth.WithJWTAuth(h.handleDeleteShop, h.userStore)).Methods(http.MethodDelete)
 
 	router.HandleFunc("/category", auth.WithAdminJWTAuth(h.handleCreateShopCategory, h.userStore)).Methods(http.MethodPost)
+	router.HandleFunc("/category/{category_id}", auth.WithAdminJWTAuth(h.handleGetShopCategory, h.userStore)).Methods(http.MethodGet)
+}
+
+func (h *Handler) handleGetShopCategory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["category_id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing category ID"))
+		return
+	}
+
+	categoryID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid category ID"))
+		return
+	}
+
+	category, err := h.categoryStore.GetShopCategoryByID(categoryID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, category)
 }
 
 func (h *Handler) handleCreateShopCategory(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +85,7 @@ func (h *Handler) handleGetShop(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	str, ok := vars["shop_id"]
 	if !ok {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing shop id"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing shop ID"))
 		return
 	}
 
